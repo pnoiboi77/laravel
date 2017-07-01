@@ -18,4 +18,10 @@
 </p>
 @endfor
 
+@foreach($posts as $post)
+    <p>
+    <a href="{{ route('admin.edit', ['id' => array_search($post, $posts)]) }}">Edit Post {{array_search($post, $posts)}}</a>
+    </p>
+@endforeach
+
 @endsection
