@@ -20,9 +20,9 @@
         <p class="testing">Checking URL Facade for main.css</p>        
 
         @foreach($posts as $post)
-        <p><h2>{{$post['title']}}</h2>
-        <span class="testing">{{$post['content']}}</span>
-        <a href="{{ route('blog.post', ['id' => array_search($post, $posts)]) }}">Post {{array_search($post, $posts)}}</a></p>
+        <p><h2>{{$post->title}}</h2>
+        <span class="testing">{{$post->content}}</span>
+        <a href="{{ route('blog.post', ['id' => $post->id ]) }}">Post {{ $post->id }}</a></p>
         </p>
         @endforeach
 @endsection

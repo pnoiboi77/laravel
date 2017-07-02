@@ -15,11 +15,11 @@
             <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" class="form-control" id="title" name="title" placeholder="Title"
-                value="{{ $post['title'] }}" />
+                value="{{ $post->title }}" />
             </div>
             <div class="form-group">
                 <label for="content">Content</label>
-                <textarea class="form-control" id="content" name="content" row="4" placeholder="Content">{{$post['content']}}</textarea>
+                <textarea class="form-control" id="content" name="content" row="4" placeholder="Content">{{$post->content}}</textarea>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

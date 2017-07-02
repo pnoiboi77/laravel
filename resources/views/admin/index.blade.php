@@ -19,8 +19,11 @@
 @endfor
 
 @foreach($posts as $post)
-    <p>
-    <a href="{{ route('admin.edit', ['id' => array_search($post, $posts)]) }}">Edit Post {{array_search($post, $posts)}}</a>
+    <p>    
+    <h2>{{$post->title}}</h2>
+    <span class="testing">{{$post->content}}</span>
+    <a href="{{ route('admin.edit', ['id' => $post->id]) }}">Edit Post {{$post->id}}</a>
+    <a href="{{ route('admin.delete', ['id' => $post->id]) }}">Delete Post {{$post->id}}</a>
     </p>
 @endforeach
 
