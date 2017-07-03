@@ -21,6 +21,11 @@
 
         @foreach($posts as $post)
         <p><h2>{{$post->title}}</h2>
+        <h3>
+            @foreach($post->tags as $tag)
+                - {{$tag->name}} -
+            @endforeach
+        </h3>
         <span class="testing">{{$post->content}}</span>
         <a href="{{ route('blog.post', ['id' => $post->id ]) }}">Post {{ $post->id }}</a></p>
         </p>

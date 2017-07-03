@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Post;
+use App\Like;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
 use Illuminate\Validation\Factory;
@@ -27,12 +29,22 @@ class PostController extends Controller
     public function getPost(Store $session, $id) {
         /*$post = new Post();
         $post = $post->getPost($session, $id);*/
-        $post = Post::find($id);
+        $post = Post::find($id)->with('likes')->first();
         return view('blog.post', ['post' => $post]);
     }
 
+    public function getLikePost(Store $session, $id) {
+        /*$post = new Post();
+        $post = $post->getPost($session, $id);*/
+        $post = Post::find($id);
+        $like = new Like();
+        $post->likes()->save($like);
+        return redirect()->back();
+    }
+
     public function getAdminCreate() {
-        return view('admin.create');
+        $tags = Tag::all();
+        return view('admin.create', ['tags' => $tags]);
     }
 
     public function getAdminEdit(Store $session, $id) {
@@ -40,8 +52,9 @@ class PostController extends Controller
         //$post = $post->getPost($session, $id);
 
         $post = Post::where('id', '=', $id)->first();
+        $tags = Tag::all();
 
-        return view('admin.edit', ['post' => $post, 'postId' => $id]);
+        return view('admin.edit', ['post' => $post, 'postId' => $id, 'tags' => $tags]);
     }
 
     public function postAdminCreate(Store $session, Request $request, Factory $validator) {
@@ -68,9 +81,15 @@ class PostController extends Controller
 
         $post = new Post([
             'title' => $request->input('title'), 'content' => $request->input('content')
-            ]);
+            ]);        
 
         $post->save();  
+        
+        $post->tags()->attach(
+            $request->input('tags') === null ? 
+                [] : 
+                $request->input('tags')
+        );
 
         return redirect()
             ->route('admin.index')
@@ -93,6 +112,17 @@ class PostController extends Controller
         $post->title = $request->input('title');
         $post->content = $request->input('content');
         $post->save();
+        /*$post->tags()->detach();
+        $post->tags()->attach(
+            $request->input('tags') === null ? 
+                [] : 
+                $request->input('tags')
+        );*/
+
+        $post->tags()->sync(
+            $request->input('tags') === null ? 
+                [] : 
+                $request->input('tags'));        
 
         return redirect()
             ->route('admin.index')
@@ -102,7 +132,9 @@ class PostController extends Controller
     public function getAdminDelete($id) 
     {
         $post = Post::find($id);
-        $post->delete();
+        $post->likes()->delete();
+        $post->tags()->detach();
+        $post->delete();        
 
         return redirect()
             ->route('admin.index')
