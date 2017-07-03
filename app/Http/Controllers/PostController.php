@@ -15,7 +15,7 @@ class PostController extends Controller
     {
         //$post = new Post();
         //$posts = $post->getPosts($session);
-        $posts = Post::orderBy('created_at', 'desc')->get();
+        $posts = Post::orderBy('created_at', 'desc')->paginate(2);
         return view('blog.index', ['posts' => $posts]);
     }
 
@@ -29,7 +29,8 @@ class PostController extends Controller
     public function getPost(Store $session, $id) {
         /*$post = new Post();
         $post = $post->getPost($session, $id);*/
-        $post = Post::find($id)->with('likes')->first();
+        
+        $post = Post::where('id', $id)->with('likes')->first();
         return view('blog.post', ['post' => $post]);
     }
 

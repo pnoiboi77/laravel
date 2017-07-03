@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
+<h3>{{$post->id}}</h3>
 <h4>{{ $post->title }}</h4>
 <p>{{ $post->content }}</p>
 <h2>Number of likes {{count($post->likes)}}</h2>

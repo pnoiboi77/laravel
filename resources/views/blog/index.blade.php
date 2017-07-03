@@ -30,5 +30,11 @@
         <a href="{{ route('blog.post', ['id' => $post->id ]) }}">Post {{ $post->id }}</a></p>
         </p>
         @endforeach
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                {{$posts->links()}}
+            </div>
+        </div>
 @endsection
 
