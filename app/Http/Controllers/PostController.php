@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Post;
 use App\Like;
 use App\Tag;
+use Auth;
+use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
 use Illuminate\Validation\Factory;
@@ -20,6 +22,9 @@ class PostController extends Controller
     }
 
     public function getAdminIndex(Store $session) {
+        if (!auth::check()) {
+            return redirect()->back();
+        }
         //$post = new Post();
         //$posts = $post->getPosts($session);
         $posts = Post::orderBy('title', 'asc')->get();
@@ -51,6 +56,9 @@ class PostController extends Controller
     public function getAdminEdit(Store $session, $id) {
         //$post = new Post();
         //$post = $post->getPost($session, $id);
+        if (!auth::check()) {
+            return redirect()->back();
+        }
 
         $post = Post::where('id', '=', $id)->first();
         $tags = Tag::all();
@@ -59,7 +67,9 @@ class PostController extends Controller
     }
 
     public function postAdminCreate(Store $session, Request $request, Factory $validator) {
-
+        if (!auth::check()) {
+            return redirect()->back();
+        }
         /*
         laravel provides injected service which can be called in controller
         $validation = $validator->make($request->all(), [
@@ -84,8 +94,14 @@ class PostController extends Controller
             'title' => $request->input('title'), 'content' => $request->input('content')
             ]);        
 
-        $post->save();  
-        
+        $user = Auth::user();
+        if (!$user)
+        {
+            return redirect()
+            ->back()
+            ->with('info', 'User Not Logged In');
+        }   
+        $user->posts()->save($post);
         $post->tags()->attach(
             $request->input('tags') === null ? 
                 [] : 
@@ -98,6 +114,10 @@ class PostController extends Controller
     }
 
     public function postAdminEdit(Store $session, Request $request) {
+        if (!auth::check()) {
+            return redirect()->back();
+        }
+
         // kept validation in route page that calls this controller method.
         $this->validate($request, [
             'title' => 'required|min:5',
@@ -110,6 +130,11 @@ class PostController extends Controller
             $request->input('content'));*/
 
         $post = Post::where('id', $request->input('id'))->first();
+
+        if (Gate::denies('update-post', $post)) {
+            return redirect()->back();
+        }
+
         $post->title = $request->input('title');
         $post->content = $request->input('content');
         $post->save();
@@ -132,7 +157,16 @@ class PostController extends Controller
 
     public function getAdminDelete($id) 
     {
+        if (!auth::check()) {
+            return redirect()->back();
+        }
+
         $post = Post::find($id);
+
+        if (Gate::denies('update-post', $post)) {
+            return redirect()->back();
+        }
+
         $post->likes()->delete();
         $post->tags()->detach();
         $post->delete();        

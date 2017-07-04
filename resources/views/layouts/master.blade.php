@@ -13,6 +13,7 @@
         <div class="container" style="margin: 60px 0 0 0">     
             @yield('content')
         </div>
+        <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>
 

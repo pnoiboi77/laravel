@@ -89,6 +89,15 @@ Route::group(['prefix' => 'admin'], function() {
 
 });
 
+Auth::routes();
+
+Route::post('login', [
+    'uses' => 'SigninController@signin',
+    'as' => 'auth.signin'
+]);
+
+//Route::get('/home', 'HomeController@index')->name('home');
+
 /* non grouped route for admin
 Route::get('admin', function() {
         return view('admin.index');
@@ -109,3 +118,4 @@ Route::get('admin', function() {
     Route::post('admin/update', function() {
         return "it works!";
     })->name('admin.update'); // cannot use edit because of get defined admin.edit is expecting param
+*/
