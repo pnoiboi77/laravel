@@ -22,9 +22,6 @@ class PostController extends Controller
     }
 
     public function getAdminIndex(Store $session) {
-        if (!auth::check()) {
-            return redirect()->back();
-        }
         //$post = new Post();
         //$posts = $post->getPosts($session);
         $posts = Post::orderBy('title', 'asc')->get();
@@ -56,9 +53,6 @@ class PostController extends Controller
     public function getAdminEdit(Store $session, $id) {
         //$post = new Post();
         //$post = $post->getPost($session, $id);
-        if (!auth::check()) {
-            return redirect()->back();
-        }
 
         $post = Post::where('id', '=', $id)->first();
         $tags = Tag::all();
@@ -67,9 +61,7 @@ class PostController extends Controller
     }
 
     public function postAdminCreate(Store $session, Request $request, Factory $validator) {
-        if (!auth::check()) {
-            return redirect()->back();
-        }
+    
         /*
         laravel provides injected service which can be called in controller
         $validation = $validator->make($request->all(), [
@@ -94,13 +86,7 @@ class PostController extends Controller
             'title' => $request->input('title'), 'content' => $request->input('content')
             ]);        
 
-        $user = Auth::user();
-        if (!$user)
-        {
-            return redirect()
-            ->back()
-            ->with('info', 'User Not Logged In');
-        }   
+        $user = Auth::user();        
         $user->posts()->save($post);
         $post->tags()->attach(
             $request->input('tags') === null ? 
@@ -114,10 +100,6 @@ class PostController extends Controller
     }
 
     public function postAdminEdit(Store $session, Request $request) {
-        if (!auth::check()) {
-            return redirect()->back();
-        }
-
         // kept validation in route page that calls this controller method.
         $this->validate($request, [
             'title' => 'required|min:5',
@@ -156,11 +138,7 @@ class PostController extends Controller
     }
 
     public function getAdminDelete($id) 
-    {
-        if (!auth::check()) {
-            return redirect()->back();
-        }
-
+    {        
         $post = Post::find($id);
 
         if (Gate::denies('update-post', $post)) {
